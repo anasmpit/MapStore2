@@ -1,0 +1,68 @@
+version: "3.8"
+networks:
+  mapstore-network:
+    driver: bridge
+
+services:
+  postgres:
+    build:
+      context: ./docker/postgres/
+    image: geosolutions-mapstore/postgis
+    container_name: postgres
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: geostore
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mapstore-network
+
+  mapstore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OVR: "geostore-datasource-ovr.properties"
+        MAPSTORE_WEBAPP_SRC: "https://github.com/geosolutions-it/MapStore2/releases/latest/download/mapstore.war"
+    container_name: mapstore
+    # Fix command: 'wait-for-postgres' script missing, replace with wait-for-it.sh or simple wait
+    # Use a shell script or standard wait-for-it utility or replace with a simple retry loop
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      until pg_isready -h postgres -p 5432 -U postgres; do
+        echo 'Waiting for Postgres...';
+        sleep 3;
+      done;
+      catalina.sh run
+      "
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - mapstore-network
+
+  proxy:
+    image: nginx
+    container_name: proxy
+    volumes:
+      - ./docker/mapstore.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - mapstore
+    networks:
+      - mapstore-network
+
+volumes:
+  pg_data:
