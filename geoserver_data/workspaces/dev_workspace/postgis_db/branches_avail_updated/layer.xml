@@ -1,0 +1,22 @@
+<layer>
+  <name>branches_avail_updated</name>
+  <id>LayerInfoImpl--7f8e86c:197aec105ab:-7ff5</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7f8e86c:197aec105ab:-7ff3</id>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <id>StyleInfoImpl--7f8e86c:197aec105ab:-7ff3</id>
+    </style>
+  </styles>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--7f8e86c:197aec105ab:-7ff6</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2025-06-27 00:36:17.497 UTC</dateCreated>
+  <dateModified>2025-06-27 00:37:15.779 UTC</dateModified>
+</layer>
