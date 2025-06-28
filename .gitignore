@@ -28,3 +28,7 @@ site
 .DS_Store
 venv
 __pycache__
+branches_avail.sql
+branches_avail_updated.sql
+create_query.sql
+enable_postgis.sql

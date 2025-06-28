@@ -7,7 +7,7 @@ services:
   postgres:
     build:
       context: ./docker/postgres/
-    image: postgis/postgis:15-3.3
+    image: geosolutions-mapstore/postgis
     container_name: postgres
     restart: on-failure
     healthcheck:
@@ -20,7 +20,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: geostore
     volumes:
-      - ./sql/enable_postgis.sql:/docker-entrypoint-initdb.d/enable_postgis.sql
       - ./sql/create_query.sql:/docker-entrypoint-initdb.d/create_query.sql
       - pg_data:/var/lib/postgresql/data
       - ./sql/branches_avail_updated.sql:/docker-entrypoint-initdb.d/branches_avail_updated.sql
@@ -29,19 +28,6 @@ services:
       - "5432:5432"
     networks:
       - mapstore-network
-
-  geoserver:
-    image: docker.osgeo.org/geoserver:2.25.3
-    container_name: geoserver
-    ports:
-      - "8090:8080"
-    environment:
-      - SKIP_DEMO_DATA=true
-    volumes:
-      - ./geoserver_data:/opt/geoserver_data
-    networks:
-      - mapstore-network
-
 
   mapstore:
     build:
@@ -64,11 +50,8 @@ services:
       "
     depends_on:
       - postgres
-      - geoserver
     ports:
       - "8080:8080"
-    environment:
-      - JAVA_OPTS=-Ddatadir.location=/etc/mapstore/datadir
     networks:
       - mapstore-network
 
